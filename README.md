@@ -37,7 +37,7 @@ Inkognito is being prepared as a commercial macOS product with a privacy-first l
 
 - The app currently builds successfully via `xcodebuild -project Inkognito.xcodeproj -scheme Inkognito -sdk macosx build`.
 - Detection regressions currently pass with `202` checks.
-- Sparkle distribution reset work remains tracked separately under `PROJ-22`.
+- Distribution-specific reset work for Sparkle and historical update paths remains tracked separately under `PROJ-22`.
 
 ## Build
 
@@ -69,5 +69,4 @@ CLANG_MODULE_CACHE_PATH=/private/tmp/swift-module-cache swift scripts/run_detect
 
 - This repository is the new product base for Inkognito.
 - Legacy commercial-readiness audit history remains in the earlier reference repository.
-- Sparkle distribution reset work continues separately under `PROJ-22`.
 - Runtime migration paths that still reference older `HideMyData` user directories are intentionally retained for compatibility.

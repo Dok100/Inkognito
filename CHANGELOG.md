@@ -2,10 +2,11 @@
 
 ## Produkt und Sprache
 
-* Sichtbares Branding in App, Projekt, Update-Dialog und Sparkle-Assets auf `Inkognito` umgestellt.
+* Sichtbares Branding in App, Projektpfaden und aktiven Produktdokumenten auf `Inkognito` ausgerichtet.
 * Startansicht, Leerzustaende und Hauptnavigation sprachlich und visuell geschaerft.
 * Sichtbare UI-Texte, Statusmeldungen, Export-Hinweise und Einstellungen konsistent ins Deutsche ueberfuehrt.
 * Diagnoseansicht, Review und `Eigene Regeln` sprechen produktnaeher und zeigen weniger interne Begriffe.
+* Neue Produktbasis im Repository `Dok100/Inkognito` aufgebaut und vom historischen Referenz-Repository getrennt.
 
 ## Erkennung und Dokumentklassen
 
@@ -47,6 +48,7 @@
 * Validierung von Manifest-Pfaden ergaenzt, um unsichere Pfad-Traversal beim Download zu verhindern.
 * Laden des Modells auf einen revisionsgebundenen lokalen Cache-Pfad umgestellt.
 * Aktive Legacy-Migrationspfade fuer Cache, Recents, Clipboard-Session und Bestandsdateien bewusst erhalten, obwohl der laufende App-Pfad bereits `Inkognito` spricht.
+* Xcode-Target, Scheme, Source-Ordner und App-Einstieg auf `Inkognito` als aktive Produktbasis nachgezogen.
 * Build-Warnungen fuer die ab macOS 26 veraltete `Text + Text`-Komposition entfernt.
 
 # 0.2.0
