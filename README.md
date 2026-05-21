@@ -2,42 +2,42 @@
 
 Copyright (c) Dok100. All rights reserved.
 
-This repository is not open source. No permission is granted to use, copy, modify, or distribute this software without prior written consent.
+Dieses Repository ist nicht Open Source. Ohne vorherige schriftliche Zustimmung wird keine Erlaubnis erteilt, diese Software zu nutzen, zu kopieren, zu verändern oder weiterzugeben.
 
-## Overview
+## Überblick
 
-Inkognito is a native macOS app for locally anonymizing sensitive content in:
+Inkognito ist eine native macOS-App zur lokalen Anonymisierung sensibler Inhalte in:
 
 - PDFs
-- images
-- clipboard text
+- Bildern
+- Zwischenablage-Text
 
-Detection, OCR, review, and export stay on the Mac. Inkognito combines local model-based detection, document-aware regex patterns, Apple Vision OCR, and manual review so confidential files do not need to leave the device.
+Erkennung, OCR, Review und Export bleiben auf dem Mac. Inkognito kombiniert lokale modellgestützte Erkennung, dokumentbewusste Regex-Muster, Apple Vision OCR und manuelle Prüfung, damit vertrauliche Daten das Gerät nicht verlassen müssen.
 
-## Core Capabilities
+## Kernfunktionen
 
-- Local anonymization for PDFs, images, and clipboard workflows
-- Review-first workflow before final redaction
-- OCR fallback for scanned or broken-text PDFs
-- Manual redactions and recovery actions during review
-- Document-aware heuristics for letters, invoices, and structured forms
-- Export flow with final redaction output and summary guidance
+- Lokale Anonymisierung für PDFs, Bilder und Zwischenablage-Workflows
+- Review-zentrierter Ablauf vor der finalen Schwärzung
+- OCR-Fallback für gescannte oder fehlerhafte PDF-Textschichten
+- Manuelle Schwärzungen und Rücknahmen direkt im Review
+- Dokumentbewusste Heuristiken für Briefe, Rechnungen und strukturierte Formulare
+- Export-Ablauf mit finaler Schwärzung und verständlicher Zusammenfassung
 
-## Product Direction
+## Produktrichtung
 
-Inkognito is being prepared as a commercial macOS product with a privacy-first local workflow. The current repository is the active product base; historical commercial-readiness and relicensing cleanup remains documented in the earlier reference repository.
+Inkognito wird als kommerzielles macOS-Produkt mit privacy-first Local-Workflow vorbereitet. Dieses Repository ist die aktive Produktbasis; die historische Commercial-Readiness- und Relicensing-Bereinigung bleibt im früheren Referenz-Repository dokumentiert.
 
-## Requirements
+## Voraussetzungen
 
-- macOS 26 or newer
+- macOS 26 oder neuer
 - Apple Silicon
-- Xcode 16 or newer for local builds
+- Xcode 16 oder neuer für lokale Builds
 
-## Release Readiness
+## Release-Stand
 
-- The app currently builds successfully via `xcodebuild -project Inkognito.xcodeproj -scheme Inkognito -sdk macosx build`.
-- Detection regressions currently pass with `202` checks.
-- Distribution-specific reset work for Sparkle and historical update paths remains tracked separately under `PROJ-22`.
+- Die App baut aktuell erfolgreich über `xcodebuild -project Inkognito.xcodeproj -scheme Inkognito -sdk macosx build`.
+- Die Detection-Regressionen laufen aktuell mit `202` Checks grün.
+- Distributionsspezifische Neuaufsetzung für Sparkle und historische Update-Pfade bleibt separat unter `PROJ-22` nachgehalten.
 
 ## Build
 
@@ -45,28 +45,28 @@ Inkognito is being prepared as a commercial macOS product with a privacy-first l
 open Inkognito.xcodeproj
 ```
 
-Then in Xcode:
+Dann in Xcode:
 
-1. Select the `Inkognito` scheme.
-2. Run the app with `Cmd+R`.
+1. Das Scheme `Inkognito` auswählen.
+2. Die App mit `Cmd+R` starten.
 
-## Regression Checks
+## Regressionen
 
 ```bash
 CLANG_MODULE_CACHE_PATH=/private/tmp/swift-module-cache swift scripts/run_detection_regressions.swift
 ```
 
-## Repository Layout
+## Repository-Struktur
 
-- `Inkognito/`: application source
-- `Inkognito.xcodeproj/`: Xcode project
-- `scripts/`: local maintenance and regression scripts
-- `fixtures/`: regression and diagnostic fixtures
-- `docs/`: runbook, release, and operating notes
-- `features/`: product workstreams and feature notes
+- `Inkognito/`: App-Quellcode
+- `Inkognito.xcodeproj/`: Xcode-Projekt
+- `scripts/`: lokale Wartungs- und Regressionsskripte
+- `fixtures/`: Regressions- und Diagnose-Fixtures
+- `docs/`: Runbook, Release- und Betriebsnotizen
+- `features/`: Produkt-Arbeitsstränge und Feature-Notizen
 
-## Notes
+## Hinweise
 
-- This repository is the new product base for Inkognito.
-- Legacy commercial-readiness audit history remains in the earlier reference repository.
-- Runtime migration paths that still reference older `HideMyData` user directories are intentionally retained for compatibility.
+- Dieses Repository ist die neue Produktbasis für Inkognito.
+- Die frühere Commercial-Readiness-Audit-Historie bleibt im älteren Referenz-Repository erhalten.
+- Laufzeit-Migrationspfade, die noch auf frühere `HideMyData`-Benutzerverzeichnisse zeigen, bleiben bewusst aus Kompatibilitätsgründen erhalten.

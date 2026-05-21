@@ -53,25 +53,25 @@
 
 # 0.2.0
 
-## Inkognito is now notarized!
+## Inkognito ist jetzt notarisiert
 
-* Integrate Sparkle for automatic updates. 
-* `Check for Updates…` menu item in the app menu.
-* Switched to xcodegen.
-* Allow removing metadata from files when saving.
+* Sparkle für automatische Updates integriert.
+* Menüeintrag `Check for Updates…` im App-Menü ergänzt.
+* Auf `xcodegen` umgestellt.
+* Entfernen von Metadaten beim Speichern ermöglicht.
 
-### ⚠️ Manual cleanup for users on v0.1.0
+### ⚠️ Einmalige Bereinigung für Nutzer auf `v0.1.0`
 
-Because of notarization and early distribution changes, some users moving from `v0.1.0` may have needed a one-time reinstall.
+Durch Notarisierung und frühe Distributionsänderungen konnte für einige Nutzer beim Wechsel von `v0.1.0` eine einmalige Neuinstallation nötig werden.
 
-* If you use Raycast or AppCleaner, uninstalling there was usually sufficient.
+* Wenn du Raycast oder AppCleaner genutzt hast, war die Deinstallation dort meist ausreichend.
 
-Manually:
+Manuell:
 
-* Drag the app to trash
-* Older prerelease data containers may remain on disk and can be removed if no longer needed.
+* App in den Papierkorb ziehen
+* Ältere Prerelease-Datencontainer können auf dem Datenträger verbleiben und bei Bedarf entfernt werden.
 
-Future versions are intended to update in place via Sparkle.
+Künftige Versionen sollen per Sparkle direkt an Ort und Stelle aktualisiert werden.
 
 # 0.1.0
 
