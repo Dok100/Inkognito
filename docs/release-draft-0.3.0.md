@@ -34,6 +34,12 @@ Dieses Release macht Inkognito in drei Bereichen deutlich reifer: bessere Erkenn
 - aktive Legacy-Migrationspfade bewusst erhalten, obwohl der laufende App-Pfad bereits `Inkognito` spricht
 - interner Projektpfad, App-Einstieg und Xcode-Metadaten auf `Inkognito` als neue Produktbasis ausgerichtet
 
+## Nicht Teil dieses Releases
+
+- kein neuer Sparkle-Distributionspfad; die getrennte Neuaufsetzung bleibt bewusst in `PROJ-22`
+- keine Rueckmigration des historischen Referenz-Repositories in das neue Produkt-Repository
+- keine Aenderung am proprietaeren Repo-Status; `Dok100/Inkognito` bleibt bewusst ohne Open-Source-Lizenzdatei
+
 ## Verifikation
 
 - `swift scripts/run_detection_regressions.swift`

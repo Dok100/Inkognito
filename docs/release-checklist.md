@@ -50,5 +50,7 @@
 - `docs/release-draft-0.3.0.md` gegen den tatsaechlichen Release-Umfang querlesen
 - Release-Text / Highlights formulieren
 - GitHub-Repo-Beschreibung, Sichtbarkeit und Default-Branch passen zur neuen Produktbasis
+- Release-Text grenzt klar ab, dass Sparkle-/Distributionsreset nicht Teil von `0.3.0` ist
+- proprietaerer Repo-Status bleibt in README und Release-Kommunikation konsistent
 - Sparkle-/DMG-Artefakte pruefen, falls ein Distribution-Release gebaut wird
 - bei neuer Distribution zuerst die getrennte Sparkle-Strategie aus `features/PROJ-22-sparkle-distribution-reset.md` gegen den historischen `HideMyData`-Pfad abgleichen
