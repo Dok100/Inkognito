@@ -23,6 +23,22 @@ Detection, OCR, review, and export stay on the Mac. Inkognito combines local mod
 - Document-aware heuristics for letters, invoices, and structured forms
 - Export flow with final redaction output and summary guidance
 
+## Product Direction
+
+Inkognito is being prepared as a commercial macOS product with a privacy-first local workflow. The current repository is the active product base; historical commercial-readiness and relicensing cleanup remains documented in the earlier reference repository.
+
+## Requirements
+
+- macOS 26 or newer
+- Apple Silicon
+- Xcode 16 or newer for local builds
+
+## Release Readiness
+
+- The app currently builds successfully via `xcodebuild -project Inkognito.xcodeproj -scheme Inkognito -sdk macosx build`.
+- Detection regressions currently pass with `202` checks.
+- Sparkle distribution reset work remains tracked separately under `PROJ-22`.
+
 ## Build
 
 ```bash
@@ -54,3 +70,4 @@ CLANG_MODULE_CACHE_PATH=/private/tmp/swift-module-cache swift scripts/run_detect
 - This repository is the new product base for Inkognito.
 - Legacy commercial-readiness audit history remains in the earlier reference repository.
 - Sparkle distribution reset work continues separately under `PROJ-22`.
+- Runtime migration paths that still reference older `HideMyData` user directories are intentionally retained for compatibility.

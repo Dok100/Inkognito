@@ -17,6 +17,7 @@
 ## Inhaltlich pruefen
 
 - Branding ueberall auf `Inkognito`
+- README und proprietaerer Repo-Hinweis passen zum gewollten Produktstatus
 - App-Icon aktuell
 - Review-Workflow klar
 - Klick auf sichtbare Schwärzung springt zuverlässig zur passenden Review-Kachel
@@ -46,6 +47,8 @@
 
 - `CHANGELOG.md` aktualisieren
 - `README.md` und `docs/architecture.md` gegen den realen Produktstand querlesen
+- `docs/release-draft-0.3.0.md` gegen den tatsaechlichen Release-Umfang querlesen
 - Release-Text / Highlights formulieren
+- GitHub-Repo-Beschreibung, Sichtbarkeit und Default-Branch passen zur neuen Produktbasis
 - Sparkle-/DMG-Artefakte pruefen, falls ein Distribution-Release gebaut wird
 - bei neuer Distribution zuerst die getrennte Sparkle-Strategie aus `features/PROJ-22-sparkle-distribution-reset.md` gegen den historischen `HideMyData`-Pfad abgleichen

@@ -6,7 +6,7 @@ Inkognito 0.3.0 - Review, Dokumentklassen und Regeln deutlich staerker
 
 ## Kurzfassung
 
-Dieses Release macht Inkognito in drei Bereichen deutlich reifer: bessere Erkennung bei realen Dokumentklassen, klarerer Review- und Export-Workflow und produktnaehere eigene Regeln.
+Dieses Release macht Inkognito in drei Bereichen deutlich reifer: bessere Erkennung bei realen Dokumentklassen, klarerer Review- und Export-Workflow und produktnaehere eigene Regeln. Gleichzeitig steht mit diesem Stand erstmals eine saubere neue Produktbasis im Repository `Dok100/Inkognito`.
 
 ## Highlights
 
@@ -32,6 +32,7 @@ Dieses Release macht Inkognito in drei Bereichen deutlich reifer: bessere Erkenn
 - neue anonymisierte Fixtures fuer DIN-5008, ZUGFeRD und E-Rechnungs-Feldreferenzen
 - Build-Warnungen fuer die ab macOS 26 veraltete `Text + Text`-Komposition entfernt
 - aktive Legacy-Migrationspfade bewusst erhalten, obwohl der laufende App-Pfad bereits `Inkognito` spricht
+- interner Projektpfad, App-Einstieg und Xcode-Metadaten auf `Inkognito` als neue Produktbasis ausgerichtet
 
 ## Verifikation
 
@@ -46,4 +47,4 @@ Dieses Release macht Inkognito in drei Bereichen deutlich reifer: bessere Erkenn
 
 ## Interne Einordnung
 
-Dieses Release deckt den Feature-Block `PROJ-8` bis `PROJ-20` ab.
+Dieses Release deckt den Feature-Block `PROJ-8` bis `PROJ-20` ab und fuehrt den verifizierten Produktstand in das neue Repository `Dok100/Inkognito` ueber.
