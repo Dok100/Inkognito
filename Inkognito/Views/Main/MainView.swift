@@ -2014,7 +2014,7 @@ private struct CustomPatternsSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Eigene Regeln")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
-                Text("Lege eigene Begriffe, Personen oder Adressbausteine Zeile für Zeile an. Inkognito zeigt dir direkt, welche zusätzlichen Teil- oder Blockregeln daraus beim Speichern entstehen.")
+                Text("Lege eigene Begriffe, Namen oder Adressbausteine Zeile für Zeile an. Inkognito zeigt dir direkt, welche sinnvollen Varianten daraus beim Speichern zusätzlich entstehen.")
                     .font(.system(size: 13))
                     .foregroundStyle(.primary.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
@@ -2044,7 +2044,7 @@ private struct CustomPatternsSheet: View {
 
     private var composerColumn: some View {
         VStack(alignment: .leading, spacing: 18) {
-            sectionCard(title: selectedPatternID == nil ? "Neue Regel" : "Regel bearbeiten", subtitle: "Lege pro Zeile einen Baustein an. Inkognito zeigt dir danach direkt, welche Regeln daraus entstehen.") {
+            sectionCard(title: selectedPatternID == nil ? "Neue Regel" : "Regel bearbeiten", subtitle: "Lege pro Zeile einen Baustein an. Inkognito zeigt dir danach direkt, welche Regelvarianten daraus entstehen.") {
                 VStack(alignment: .leading, spacing: 18) {
                     fieldGroup(title: "Name der Regel", footnote: "Dieser Name erscheint später in der Liste deiner eigenen Regeln.") {
                         TextField("z. B. Familie Mustermann oder Lieferadresse", text: $label)
@@ -2058,7 +2058,7 @@ private struct CustomPatternsSheet: View {
                             .focused($focusedField, equals: .label)
                     }
 
-                    fieldGroup(title: "Bausteine eingeben", trailingText: "Eine Zeile pro Baustein", footnote: "Geeignet für einzelne Werte ebenso wie für vollständige Adressblöcke.") {
+                    fieldGroup(title: "Bausteine eingeben", trailingText: "Eine Zeile pro Baustein", footnote: "Geeignet für einzelne Werte ebenso wie für vollständige Adressblöcke oder Namensvarianten.") {
                         HStack(spacing: 10) {
                             Text("Name, Straße, PLZ/Ort oder weitere Bausteine jeweils in eine eigene Zeile setzen.")
                                 .font(.system(size: 12))
@@ -2098,7 +2098,7 @@ private struct CustomPatternsSheet: View {
             }
 
             if !previewPatterns.isEmpty {
-                sectionCard(title: "Vorschau vor dem Speichern", subtitle: "Diese Regeln werden aus deinen Eingaben neu angelegt:") {
+                sectionCard(title: "Vorschau vor dem Speichern", subtitle: "Diese Regelvarianten werden aus deinen Eingaben neu angelegt:") {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 10) {
                             previewSummary
@@ -2148,7 +2148,7 @@ private struct CustomPatternsSheet: View {
             }
 
             if !documentRuleHitPreviews.isEmpty {
-                sectionCard(title: "Treffer im aktuellen Dokument", subtitle: "So würde die aktuelle Eingabe hier gerade anschlagen:") {
+                sectionCard(title: "Treffer im aktuellen Dokument", subtitle: "So würde die aktuelle Eingabe im geöffneten Dokument gerade wirken:") {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Diese Vorschau ist bewusst einfach und prüft nur, ob deine aktuellen Regelbausteine im geladenen Dokumenttext vorkommen.")
                             .font(.system(size: 11.5))
@@ -2198,7 +2198,7 @@ private struct CustomPatternsSheet: View {
     private var bottomActionBar: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(selectedPatternID == nil ? "Regel ergänzen oder Abschluss wählen" : "Änderung speichern oder Abschluss wählen")
+                Text(selectedPatternID == nil ? "Regel hinzufügen oder Abschluss wählen" : "Änderung speichern oder Abschluss wählen")
                     .font(.system(size: 12.5, weight: .semibold))
                     .foregroundStyle(.primary)
                 Text("Die Abschlussleiste bleibt auch am unteren Ende des Editors sichtbar.")
@@ -2251,7 +2251,7 @@ private struct CustomPatternsSheet: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Regeln ergänzen erstellt zusätzliche Teil- oder Blockregeln aus bestehenden Einträgen.")
+                Text("Regeln ergänzen erstellt aus bestehenden Einträgen zusätzliche sinnvolle Varianten, zum Beispiel Teil- oder Blockregeln.")
                     .font(.system(size: 11.5))
                     .foregroundStyle(.primary.opacity(colorScheme == .dark ? 0.76 : 0.64))
                     .fixedSize(horizontal: false, vertical: true)
@@ -2282,7 +2282,7 @@ private struct CustomPatternsSheet: View {
                     Text("Noch keine eigenen Regeln angelegt.")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.primary.opacity(0.82))
-                    Text("Importiere eine Regeldatei oder lege rechts deine erste Regel an.")
+                        Text("Importiere eine Regeldatei oder lege rechts deine erste eigene Regel an.")
                         .font(.system(size: 12))
                         .foregroundStyle(.primary.opacity(0.68))
                 }
@@ -2577,9 +2577,9 @@ private struct CustomPatternsSheet: View {
     private var migrateConfirmationMessage: String {
         let addedCount = store.previewLegacyMigrationAddedCount()
         if addedCount > 0 {
-            return "Inkognito ergänzt voraussichtlich \(addedCount) zusätzliche Teil- oder Blockregeln aus deinen vorhandenen Regeln."
+            return "Inkognito ergänzt voraussichtlich \(addedCount) zusätzliche Regelvarianten aus deinen vorhandenen Regeln."
         }
-        return "Inkognito prüft deine vorhandenen Regeln und ergänzt aktuell keine weiteren Ableitungen."
+        return "Inkognito prüft deine vorhandenen Regeln und ergänzt aktuell keine weiteren sinnvollen Varianten."
     }
 
     private var cleanupConfirmationMessage: String {
@@ -2895,7 +2895,7 @@ private struct CustomPatternsSheet: View {
         }
 
         if inferredCategory == .privateAddress {
-            return "Die Eingabe sieht bereits wie ein Adressblock aus. Getrennte Zeilen helfen Inkognito dabei, daraus zusätzlich sinnvolle Teil- und Blockregeln abzuleiten."
+            return "Die Eingabe sieht bereits wie ein Adressblock aus. Getrennte Zeilen helfen Inkognito dabei, daraus zusätzliche sinnvolle Varianten abzuleiten."
         }
 
         if inferredCategory == .accountNumber {
@@ -3020,8 +3020,8 @@ private struct CustomPatternsSheet: View {
     private func migratePatterns() {
         let addedCount = store.migrateLegacyPatterns()
         importExportMessage = addedCount > 0
-            ? "\(addedCount) zusätzliche Ableitungen ergänzt."
-            : "Keine zusätzlichen Ableitungen nötig."
+            ? "\(addedCount) zusätzliche Regelvarianten ergänzt."
+            : "Keine zusätzlichen Regelvarianten nötig."
     }
 
     private func lineBinding(at index: Int) -> Binding<String> {

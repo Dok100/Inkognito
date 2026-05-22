@@ -1,6 +1,6 @@
 # PROJ-23 – Onboarding- und Regeln-Editor-UX nachschärfen
 
-**Status**: In Arbeit
+**Status**: Abgeschlossen
 
 ## Ziel
 
@@ -25,3 +25,10 @@ Die ersten Produkttexte und der Regeln-Editor sollen so nachgeschärft werden, d
 - `Inkognito/Views/Main/MainView.swift`
 - `docs/architecture.md`
 - das fruehere Commercial-Readiness-Audit bleibt als Referenz im vorherigen Repository
+
+## Ergebnis
+
+- Der Begrüßungsbildschirm spricht klarer über PDFs, Bilder, kopierte Texte und den lokalen Charakter der Anonymisierung.
+- Der Zwischenablage-/KI-Flow ist im Onboarding jetzt sichtbar, ohne den Einstieg zu überladen.
+- Der Regeln-Editor erklärt eigene Regeln, Variantenbildung und Dokumentvorschau verständlicher und weniger technisch.
+- Die feste Abschlussleiste am unteren Rand bleibt der bevorzugte Abschlussweg, damit Nutzer nicht zurück an den Seitenanfang scrollen müssen.
