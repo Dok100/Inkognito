@@ -1986,7 +1986,7 @@ private struct CustomPatternsSheet: View {
             switch action {
             case .migrate:
                 return Alert(
-                    title: Text("Bestehende Regeln ergänzen?"),
+                    title: Text("Bestehende Varianten ergänzen?"),
                     message: Text(migrateConfirmationMessage),
                     primaryButton: .default(Text("Ausführen"), action: migratePatterns),
                     secondaryButton: .cancel(Text("Abbrechen"))
@@ -2014,7 +2014,7 @@ private struct CustomPatternsSheet: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("Eigene Regeln")
                     .font(.system(size: 28, weight: .semibold, design: .rounded))
-                Text("Lege eigene Begriffe, Namen oder Adressbausteine Zeile für Zeile an. Inkognito zeigt dir direkt, welche sinnvollen Varianten daraus beim Speichern zusätzlich entstehen.")
+                Text("Lege eigene Begriffe, Namen oder Adressbausteine Zeile für Zeile an. Inkognito zeigt dir beim Speichern direkt, welche zusätzlichen Regelvarianten daraus entstehen.")
                     .font(.system(size: 13))
                     .foregroundStyle(.primary.opacity(0.82))
                     .fixedSize(horizontal: false, vertical: true)
@@ -2037,7 +2037,7 @@ private struct CustomPatternsSheet: View {
 
             Button("Fertig") { dismiss() }
                 .controlSize(.large)
-                .buttonStyle(.glassProminent)
+                .buttonStyle(.glass)
         }
         .padding(.horizontal, 4)
     }
@@ -2101,8 +2101,6 @@ private struct CustomPatternsSheet: View {
                 sectionCard(title: "Vorschau vor dem Speichern", subtitle: "Diese Regelvarianten werden aus deinen Eingaben neu angelegt:") {
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: 10) {
-                            previewSummary
-
                             ForEach(previewPatterns) { pattern in
                                 HStack(alignment: .top, spacing: 12) {
                                     Text(previewBadgeText(for: pattern))
@@ -2191,17 +2189,17 @@ private struct CustomPatternsSheet: View {
                 }
             }
 
-            compactHintCard("Wenn du unten arbeitest, kannst du den Editor direkt über die feste Abschlussleiste schließen. Du musst dafür nicht zurück an den Seitenanfang scrollen.")
+            compactHintCard("Die feste Abschlussleiste bleibt beim Scrollen sichtbar. Du kannst den Editor daher auch ganz unten direkt schließen.")
         }
     }
 
     private var bottomActionBar: some View {
         HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(selectedPatternID == nil ? "Regel hinzufügen oder Abschluss wählen" : "Änderung speichern oder Abschluss wählen")
+                Text(selectedPatternID == nil ? "Regel hinzufügen oder Editor schließen" : "Änderung speichern oder Editor schließen")
                     .font(.system(size: 12.5, weight: .semibold))
                     .foregroundStyle(.primary)
-                Text("Die Abschlussleiste bleibt auch am unteren Ende des Editors sichtbar.")
+                Text("Die Leiste bleibt auch am unteren Ende des Editors sichtbar.")
                     .font(.system(size: 11.5))
                     .foregroundStyle(.secondary)
             }
@@ -2231,7 +2229,7 @@ private struct CustomPatternsSheet: View {
     private var activeRulesColumn: some View {
         sectionCard(title: "Deine Regeln", subtitle: "\(patternGroups.count) Regeln mit \(store.patterns.count) abgeleiteten Einträgen") {
             HStack(spacing: 10) {
-                Button("Regeln ergänzen") {
+                Button("Varianten ergänzen") {
                     pendingMaintenanceAction = .migrate
                 }
                 .buttonStyle(.glass)
@@ -2251,7 +2249,7 @@ private struct CustomPatternsSheet: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
-                Text("Regeln ergänzen erstellt aus bestehenden Einträgen zusätzliche sinnvolle Varianten, zum Beispiel Teil- oder Blockregeln.")
+                Text("Varianten ergänzen erstellt aus bestehenden Einträgen zusätzliche sinnvolle Regelvarianten, zum Beispiel Teil- oder Blockregeln.")
                     .font(.system(size: 11.5))
                     .foregroundStyle(.primary.opacity(colorScheme == .dark ? 0.76 : 0.64))
                     .fixedSize(horizontal: false, vertical: true)
@@ -2526,14 +2524,6 @@ private struct CustomPatternsSheet: View {
         valueLines
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
-    }
-
-    private var previewSummary: some View {
-        HStack(spacing: 8) {
-            summaryChip(title: "Original", count: previewPatterns.filter { !$0.label.contains("Teil") && !$0.label.contains("Block") }.count, color: .blue)
-            summaryChip(title: "Teilregeln", count: previewPatterns.filter { $0.label.contains("Teil") }.count, color: .teal)
-            summaryChip(title: "Blockregeln", count: previewPatterns.filter { $0.label.contains("Block") }.count, color: .indigo)
-        }
     }
 
     private var effectiveCategory: RuleCategoryOption {
@@ -2930,21 +2920,6 @@ private struct CustomPatternsSheet: View {
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(chipFillColor, in: Capsule())
-    }
-
-    private func summaryChip(title: String, count: Int, color: Color) -> some View {
-        HStack(spacing: 6) {
-            Circle()
-                .fill(color.opacity(0.9))
-                .frame(width: 7, height: 7)
-
-            Text("\(title) \(count)")
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(.primary.opacity(colorScheme == .dark ? 0.88 : 0.82))
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .background(chipFillColor.opacity(colorScheme == .dark ? 0.95 : 0.82), in: Capsule())
     }
 
     private func previewBadgeText(for pattern: CustomPattern) -> String {
