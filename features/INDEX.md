@@ -26,3 +26,4 @@
 | [PROJ-22](PROJ-22-sparkle-distribution-reset.md) | Sparkle-Historie und neue Distribution getrennt vorbereiten | Geplant |
 | [PROJ-23](PROJ-23-onboarding-and-rules-editor-ux.md) | Onboarding- und Regeln-Editor-UX nachschärfen | Abgeschlossen |
 | [PROJ-24](PROJ-24-regelvarianten-und-brieftext-detection.md) | Regelvarianten und Brieftext-Detection nachschärfen | Geplant |
+| [PROJ-25](PROJ-25-mac-app-store-readiness.md) | Mac App Store Readiness | In Arbeit |
