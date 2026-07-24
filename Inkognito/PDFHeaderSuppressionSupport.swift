@@ -68,8 +68,18 @@ enum PDFHeaderSuppressionSupport {
             let context = lines[contextStart...contextEnd]
                 .joined(separator: "\n")
                 .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            let recipientContextStart = max(0, index - 4)
+            let recipientContextEnd = min(lines.count - 1, index + 1)
+            let hasRecipientMarkerNearby = (recipientContextStart...recipientContextEnd).contains { nearbyIndex in
+                PDFTextContextSupport.looksLikeRecipientMarkerLine(lines[nearbyIndex])
+            }
 
-            if headerKeywords.contains(where: { context.contains($0) }) {
+            // Contact labels near a real recipient name (for example a repeated
+            // "Name:" field below telephone details) are not sender-header evidence.
+            // Person names are handled by the dedicated management-role check below.
+            if !isLikelyPersonName,
+               !hasRecipientMarkerNearby,
+               headerKeywords.contains(where: { context.contains($0) }) {
                 return true
             }
             if isLikelyPersonName,
@@ -84,6 +94,7 @@ enum PDFHeaderSuppressionSupport {
                 return true
             }
             if companyHeaderPresent,
+               !hasRecipientMarkerNearby,
                isEmbeddedSenderBlockLine(in: lines, at: index, isStreetAddress: isStreetAddress, isPostalCity: isPostalCity) {
                 return true
             }

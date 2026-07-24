@@ -70,10 +70,17 @@ enum NativePDFContextAnalyzer {
             }
 
             if cleaned.localizedCaseInsensitiveContains("Abweichender Ansprechpartner:") {
-                appendSpan(for: line, category: "private_person")
-                if index + 1 < lines.count { appendSpan(for: lines[index + 1], category: "private_person") }
-                if index + 2 < lines.count { appendSpan(for: lines[index + 2], category: "private_email") }
-                if index + 3 < lines.count { appendSpan(for: lines[index + 3], category: "private_phone") }
+                // This is a field label, not personal data. Only redact values that
+                // actually follow it; never turn the label or arbitrary following
+                // layout lines into a finding.
+                if let contactNameLine = nativeContactNameLine(in: lines, from: index + 1) {
+                    let contactLine = lines[contactNameLine.lineIndex]
+                    if let matchedText = inlineContextPersonName(in: contactLine.text) {
+                        appendSpan(for: lines[contactNameLine.lineIndex], matchedText: matchedText, category: "private_person")
+                    } else {
+                        appendSpan(for: lines[contactNameLine.lineIndex], category: "private_person")
+                    }
+                }
                 continue
             }
 
@@ -144,22 +151,33 @@ enum NativePDFContextAnalyzer {
             }
 
             if cleaned.localizedCaseInsensitiveContains("Hier liefern wir Ihren Strom hin") {
-                appendSpan(for: line, category: "private_address")
-                if index + 1 < lines.count { appendSpan(for: lines[index + 1], category: "private_address") }
-                if index + 2 < lines.count { appendSpan(for: lines[index + 2], category: "private_address") }
+                appendAddressCandidates(
+                    OCRContextAnalyzer.labeledAddressBlockCandidates(
+                        in: lines.map(\.text),
+                        startingAt: index,
+                        allowDotsInCityTokens: true,
+                        includeLabelAsAddress: false
+                    ),
+                    from: lines,
+                    into: &spans,
+                    sourceText: text
+                )
                 continue
             }
 
             if cleaned.localizedCaseInsensitiveContains("Schriftverkehr") {
-                appendSpan(for: line, category: "private_address")
-                if index + 1 < lines.count { appendSpan(for: lines[index + 1], category: "private_address") }
+                appendAddressCandidates(
+                    OCRContextAnalyzer.labeledAddressBlockCandidates(
+                        in: lines.map(\.text),
+                        startingAt: index,
+                        allowDotsInCityTokens: true,
+                        includeLabelAsAddress: false
+                    ),
+                    from: lines,
+                    into: &spans,
+                    sourceText: text
+                )
                 continue
-            }
-
-            if cleaned.localizedCaseInsensitiveContains("Für Rückfragen") ||
-                cleaned.localizedCaseInsensitiveContains("Fur Ruckfragen") ||
-                cleaned.localizedCaseInsensitiveContains("Rueckfragen") {
-                appendSpan(for: line, category: "private_person")
             }
 
             if cleaned.localizedCaseInsensitiveContains("Hier erreichen wir Sie bei Rückfragen") ||
@@ -283,7 +301,7 @@ enum NativePDFContextAnalyzer {
 
     private static func inlineContextPersonName(in text: String) -> String? {
         let normalized = text.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
-        let pattern = #"(?i)\b(?:name|bestellt\s+durch|besteller(?:in)?|kund(?:e|in)|kontoinhaber)\s*:\s*([A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+und\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)?\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)\b"#
+        let pattern = #"(?i)\b(?:name|bestellt\s+durch|besteller(?:in)?|kund(?:e|in)|kontoinhaber(?:in)?)\s*:\s*((?:(?:dr|prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+und\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)?\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)\b"#
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return nil }
         let nsRange = NSRange(normalized.startIndex..<normalized.endIndex, in: normalized)
         guard let match = regex.firstMatch(in: normalized, options: [], range: nsRange),
@@ -318,7 +336,7 @@ enum NativePDFContextAnalyzer {
         let cleaned = text
             .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
-        let personPattern = #"^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+und\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)?\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+$"#
+        let personPattern = #"^(?:(?:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+und\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)?\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+$"#
         return cleaned.range(of: personPattern, options: .regularExpression) != nil
     }
 

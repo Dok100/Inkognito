@@ -76,10 +76,25 @@ enum PIIDetectorSpanSanitizationSupport {
             if looksLikeOrganizationSnippet(text) || personSpanContainsAddressOrContactTail(text) {
                 return true
             }
+            if source == .pattern,
+               (!looksLikeNameishWord(text) || containsStructuralFieldLabel(text)) {
+                return true
+            }
+            if source == .pattern, looksLikeSentenceFragmentPerson(text) {
+                return true
+            }
             if source == .model, text.count <= 4, !looksLikeNameishWord(text) {
                 return true
             }
             if source == .model, text.rangeOfCharacter(from: .decimalDigits) != nil, !text.contains(" ") {
+                return true
+            }
+            // Model-only person findings must look like an actual name. This removes
+            // confident grammatical fragments such as "hin, sobald der" or "keine".
+            // Label-driven and regex findings remain available for single surnames
+            // and other document-specific variants.
+            if source == .model,
+               (!looksLikePlausiblePersonName(text) || containsStructuralFieldLabel(text)) {
                 return true
             }
             return false
@@ -277,8 +292,24 @@ enum PIIDetectorSpanSanitizationSupport {
     nonisolated static func looksLikeNameishWord(_ text: String) -> Bool {
         let cleaned = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard cleaned.count >= 3, cleaned.rangeOfCharacter(from: .decimalDigits) == nil else { return false }
-        let pattern = #"^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){0,2}$"#
+        let pattern = #"^(?:(?:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){0,2}$"#
         return cleaned.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    /// Capitalized sentence openings can resemble a two-token name when they
+    /// follow a standalone "Name:" label. Reject common determiners/pronouns
+    /// without weakening genuine names elsewhere.
+    nonisolated static func looksLikeSentenceFragmentPerson(_ text: String) -> Bool {
+        let firstToken = text
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .split(whereSeparator: \.isWhitespace)
+            .first?
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current) ?? ""
+        let sentenceStarters: Set<String> = [
+            "der", "die", "das", "dieser", "diese", "dieses",
+            "ein", "eine", "einer", "eines", "hier", "unser", "unsere", "es"
+        ]
+        return sentenceStarters.contains(firstToken)
     }
 
     nonisolated static func looksLikeTaxOfficeHeader(_ text: String) -> Bool {
@@ -338,7 +369,8 @@ enum PIIDetectorSpanSanitizationSupport {
         guard !cleaned.isEmpty else { return false }
 
         let patterns = [
-            #"(?i)^(?:frau|herr)\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){1,2}$"#,
+            #"(?i)^(?:frau|herr)\s+(?:(?:dr|prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){1,2}$"#,
+            #"(?i)^(?:dr|prof)\.?\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+$"#,
             #"^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+/[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+$"#,
             #"^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+\s+und\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+$"#,
             #"^[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){1,2}$"#
@@ -347,6 +379,20 @@ enum PIIDetectorSpanSanitizationSupport {
         return patterns.contains { pattern in
             cleaned.range(of: pattern, options: .regularExpression) != nil
         }
+    }
+
+    nonisolated static func containsStructuralFieldLabel(_ text: String) -> Bool {
+        let tokens = text
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            .components(separatedBy: CharacterSet.letters.inverted)
+            .filter { !$0.isEmpty }
+        let labels: Set<String> = [
+            "name", "vorname", "nachname", "strasse", "hausnr", "hausnummer",
+            "plz", "postleitzahl", "ort", "stadt", "email", "telefon", "mobil",
+            "iban", "bic", "konto", "kundennummer", "vertragsnummer",
+            "anschrift", "rechnungsanschrift", "lieferanschrift", "ansprechpartner"
+        ]
+        return !labels.isDisjoint(with: tokens)
     }
 
     nonisolated static func deduplicateExactSpans(_ spans: [DetectedSpan]) -> [DetectedSpan] {

@@ -10,7 +10,10 @@ enum PIIDetectorInferenceSupport {
         printDiagnostics: (PatternMatcher.Diagnostics, [DetectedSpan], String) -> Void
     ) -> Result<[DetectedSpan], Error> {
         do {
-            let entities = try model.extractPII(text, confidenceThreshold: 0.4, useSmartMerging: false)
+            // The model is deliberately only one signal among several.  A threshold of
+            // 0.4 produced a large amount of ordinary document prose as PII, especially
+            // when it was fed native PDF text or clipboard snippets without layout.
+            let entities = try model.extractPII(text, confidenceThreshold: 0.65, useSmartMerging: false)
             let modelSpans = entities.map { entity in
                 DetectedSpan(
                     category: entity.label,

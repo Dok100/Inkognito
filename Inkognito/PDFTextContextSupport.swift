@@ -8,8 +8,9 @@ enum PDFTextContextSupport {
         guard !cleaned.isEmpty else { return false }
 
         let explicitPrefixes = [
-            "kundin:", "kunde:", "lieferadresse:", "schriftverkehr", "kontoinhaber:",
-            "abweichender ansprechpartner:", "bestellt durch:", "besteller:", "bestellerin:", "name:",
+            "kundin:", "kunde:", "lieferadresse:", "lieferanschrift", "anschrift:",
+            "schriftverkehr", "kontoinhaber:", "kontoinhaberin:",
+            "abweichender ansprechpartner", "bestellt durch:", "besteller:", "bestellerin:", "name:",
             "eheleute", "herr", "frau",
             "versicherungsnehmer", "darlehensnehmer", "postanschrift",
             "korrespondenzanschrift", "objektanschrift", "rechnungsanschrift",
@@ -32,6 +33,9 @@ enum PDFTextContextSupport {
         let lines = NativePDFContextAnalyzer.pageTextLines(in: pageText)
         var matches: [NativePDFPageTextLine] = []
         var seen = Set<String>()
+        let overlappingLineIndices = lines.indices.filter { index in
+            NSIntersectionRange(lines[index].range, spanRange).length > 0
+        }
 
         for (index, line) in lines.enumerated() {
             let cleanedLine = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -40,7 +44,14 @@ enum PDFTextContextSupport {
             let compactLine = NativePDFContextAnalyzer.normalizedComparableText(cleanedLine)
             let lineContainsSpan = compactLine.contains(compactSpan)
             let overlapsSpanRange = NSIntersectionRange(line.range, spanRange).length > 0
-            guard lineContainsSpan || overlapsSpanRange else { continue }
+            // A repeated value must only inherit labels from its own occurrence.
+            // Falling back to text equality for every occurrence made the second
+            // "Eva Mustermann" inherit "Rechnungsanschrift" from the first block.
+            if overlappingLineIndices.isEmpty {
+                guard lineContainsSpan else { continue }
+            } else {
+                guard overlapsSpanRange else { continue }
+            }
 
             if isRedactionContextLabelLine(cleanedLine), seen.insert(cleanedLine).inserted {
                 matches.append(line)

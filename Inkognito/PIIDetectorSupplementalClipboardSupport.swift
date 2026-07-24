@@ -149,7 +149,7 @@ enum PIIDetectorSupplementalClipboardSupport {
 
         for (index, line) in lines.enumerated() {
             let cleaned = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard addressLabels.contains(where: { cleaned.localizedCaseInsensitiveContains($0) }) else { continue }
+            guard matchesStandaloneLabel(cleaned, candidates: addressLabels) else { continue }
 
             var previousComparable = ""
             let searchEnd = min(lines.count, index + 8)
@@ -191,14 +191,14 @@ enum PIIDetectorSupplementalClipboardSupport {
             let value = valueLine.text.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !value.isEmpty else { continue }
 
-            if personFieldLabels.contains(where: { compactLabel.localizedCaseInsensitiveContains($0) }) {
+            if matchesStandaloneLabel(compactLabel, candidates: personFieldLabels) {
                 if looksLikeHonorificOnlyLine(value) || PIIDetectorSpanSanitizationSupport.looksLikeNameishWord(value) {
                     appendSpan(for: valueLine, category: "private_person")
                 }
                 continue
             }
 
-            if streetFieldLabels.contains(where: { compactLabel.localizedCaseInsensitiveContains($0) }) {
+            if matchesStandaloneLabel(compactLabel, candidates: streetFieldLabels) {
                 if PIIDetectorSpanSanitizationSupport.looksLikeGermanStreetAddress(value) ||
                     PIIDetectorSpanSanitizationSupport.looksLikeStreetNameOnlyLine(value) {
                     appendSpan(for: valueLine, category: "private_address")
@@ -206,21 +206,21 @@ enum PIIDetectorSupplementalClipboardSupport {
                 continue
             }
 
-            if houseNumberFieldLabels.contains(where: { compactLabel.localizedCaseInsensitiveContains($0) }) {
+            if matchesStandaloneLabel(compactLabel, candidates: houseNumberFieldLabels) {
                 if PIIDetectorSpanSanitizationSupport.looksLikeHouseNumberOnlyLine(value) {
                     appendSpan(for: valueLine, category: "private_address")
                 }
                 continue
             }
 
-            if postalCodeFieldLabels.contains(where: { compactLabel.localizedCaseInsensitiveContains($0) }) {
+            if matchesStandaloneLabel(compactLabel, candidates: postalCodeFieldLabels) {
                 if PIIDetectorSpanSanitizationSupport.looksLikePostalCodeOnlyLine(value) {
                     appendSpan(for: valueLine, category: "private_address")
                 }
                 continue
             }
 
-            if cityFieldLabels.contains(where: { compactLabel.localizedCaseInsensitiveContains($0) }) {
+            if matchesStandaloneLabel(compactLabel, candidates: cityFieldLabels) {
                 if PIIDetectorSpanSanitizationSupport.looksLikeCityNameOnlyLine(value) {
                     appendSpan(for: valueLine, category: "private_address")
                 }
@@ -234,8 +234,8 @@ enum PIIDetectorSupplementalClipboardSupport {
 
     nonisolated static func supplementalInlinePersonSpans(in text: String) -> [DetectedSpan] {
         let inlinePatterns = [
-            #"\b(?:name|bestellt\s+durch|besteller(?:in)?|kunde|kundin|kontoinhaber|ansprechpartner)\s*:\s*((?:Herr|Herrn|Frau)\s+(?:(?:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){0,2}|[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+,\s*[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)?|[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){1,2})\b"#,
-            #"\b((?:Herr|Herrn|Frau)\s+(?:(?:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){0,2})\b"#,
+            #"\b(?i:name|bestellt\s+durch|besteller(?:in)?|kunde|kundin|kontoinhaber(?:in)?|ansprechpartner)\s*:\s*((?:(?i:Herr|Herrn|Frau))\s+(?:(?i:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){0,2}|(?:(?i:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+,\s*[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)?|(?:(?i:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){1,2})\b"#,
+            #"\b((?:(?i:Herr|Herrn|Frau))\s+(?:(?i:Dr|Prof)\.?\s+)?[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+){0,2})\b"#,
             #"\b([A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+,\s*[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+(?:\s+[A-ZÄÖÜ][A-Za-zÄÖÜäöüß\-]+)?)\b"#
         ]
 
@@ -243,7 +243,10 @@ enum PIIDetectorSupplementalClipboardSupport {
         var seenRanges: Set<String> = []
 
         for pattern in inlinePatterns {
-            guard let regex = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else { continue }
+            // Keep the name tokens case-sensitive. Applying case-insensitive matching
+            // to the whole expression made ordinary fragments such as
+            // "hin, sobald der" look like comma-separated person names.
+            guard let regex = try? NSRegularExpression(pattern: pattern) else { continue }
             let nsRange = NSRange(text.startIndex..<text.endIndex, in: text)
 
             for match in regex.matches(in: text, options: [], range: nsRange) {
@@ -371,6 +374,25 @@ enum PIIDetectorSupplementalClipboardSupport {
             .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
             .trimmingCharacters(in: .whitespacesAndNewlines)
         return cleaned.range(of: #"(?i)^(?:frau|herr)$"#, options: .regularExpression) != nil
+    }
+
+    /// Labels are structural evidence only when the complete line is the label.
+    /// Substring matching made normal prose such as "Der Name ..." consume the
+    /// following line as a name/address value in clipboard imports.
+    nonisolated private static func matchesStandaloneLabel(_ text: String, candidates: [String]) -> Bool {
+        let normalized = text
+            .replacingOccurrences(of: ":", with: "")
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+
+        return candidates.contains { candidate in
+            normalized == candidate
+                .replacingOccurrences(of: ":", with: "")
+                .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+        }
     }
 
     nonisolated private static func nextNonEmptyClipboardLine(after index: Int, in lines: [ClipboardTextLine]) -> ClipboardTextLine? {

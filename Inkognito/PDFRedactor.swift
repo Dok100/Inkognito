@@ -199,8 +199,15 @@ final class PDFRedactor {
                 phase = .failed("Erkennungsfehler auf Seite \(pageIndex + 1): \(err.localizedDescription)")
                 return
             case .success(let spans):
-                let supplementalContextSpans = contextualSupplementalSpans(in: source.text)
-                let ocrSupplemental = source.ocrPage.map { supplementalOCRContextSpans(in: $0) } ?? ([], [])
+                let supplementalContextSpans = PIIDetectorInferenceSupport.postProcessSpans(
+                    contextualSupplementalSpans(in: source.text),
+                    in: source.text
+                )
+                let rawOCRSupplemental = source.ocrPage.map { supplementalOCRContextSpans(in: $0) } ?? ([], [])
+                let ocrSupplemental = (
+                    PIIDetectorInferenceSupport.postProcessSpans(rawOCRSupplemental.0, in: source.text),
+                    rawOCRSupplemental.1
+                )
                 let pageResult = await PDFDetectionReviewSupport.resolvePageDetections(
                     spans: spans,
                     source: source,

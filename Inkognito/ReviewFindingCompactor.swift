@@ -260,7 +260,10 @@ enum ReviewFindingCompactor {
             if categories.contains("private_person") && categories.contains("private_address") {
                 return "Adressblock"
             }
-            return "Adresse"
+            if categories.contains("private_address") {
+                return "Adresse"
+            }
+            return cluster.candidates.first?.category ?? "Treffer"
         case .contact:
             let categories = Set(cluster.candidates.map(\.category))
             if categories.count > 1 {

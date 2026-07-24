@@ -164,7 +164,7 @@
       "id": "german_postal_city",
       "description": "Deutsche PLZ-Stadt-Kombination mit bis zu drei Ortswörtern",
       "category": "private_address",
-      "regex": "(?i)\\b\\d{5}[ \\t]*(?:\\n[ \\t]*)?(?!(?:Amazon|Bestell|Rechnung|Deutschland|Kontakt|Fax|Geschäftsführer|Registergericht|Kunden|Menge|Lieferung|Lieferadresse|Seite|Steuer(?:-Nr)?|Vorsitzender|Datum|Ersetzt)\\b)[A-ZÄÖÜa-zäöüß][A-Za-zÄÖÜäöüß.]+(?:[ -][A-Za-zÄÖÜäöüß.]+){0,2}\\b(?!<)"
+      "regex": "(?i)\\b\\d{5}[ \\t]*(?:\\n[ \\t]*)?(?!(?:Amazon|Bestell|Rechnung|Rechnungsnummer|Rechnungsbetrag|Vertragsnummer|Kundennummer|Deutschland|Kontakt|Fax|Geschäftsführer|Registergericht|Kunden|Menge|Lieferung|Lieferadresse|Seite|Steuer(?:-Nr)?|Vorsitzender|Datum|Ersetzt)\\b)[A-ZÄÖÜa-zäöüß][A-Za-zÄÖÜäöüß.]+(?:[ -][A-Za-zÄÖÜäöüß.]+){0,2}\\b(?!<)"
     },
     {
       "id": "german_honorific_name",
@@ -182,7 +182,7 @@
       "id": "german_street_house_number",
       "description": "Deutsche Straßenadresse mit Hausnummer",
       "category": "private_address",
-      "regex": "(?i)\\b(?:[A-ZÄÖÜa-zäöüß][A-Za-zÄÖÜäöüß.\\-]*\\s+){0,3}[A-ZÄÖÜa-zäöüß][A-Za-zÄÖÜäöüß.\\-]*(?:straße|str\\.|strasse|weg|allee|platz|gasse|ring|ufer|steig|steige)\\s*\\d+[A-Za-z]?\\b"
+      "regex": "(?i)\\b(?:[A-ZÄÖÜa-zäöüß][A-Za-zÄÖÜäöüß.\\-]*[ \\t]+){0,3}[A-ZÄÖÜa-zäöüß][A-Za-zÄÖÜäöüß.\\-]*(?:straße|str\\.|strasse|weg|allee|platz|gasse|ring|ufer|steig|steige)[ \\t]*\\d+[A-Za-z]?\\b"
     },
     {
       "id": "date_eu_dotted",
